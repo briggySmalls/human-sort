@@ -4,32 +4,13 @@ import { useReducer } from 'react';
 import { StateManager } from './lib/State'
 import * as O from 'fp-ts/Option'
 import { EmptyTree } from './lib/Tree'
-import { Comparison, ComparisonResult } from './lib/Comparison'
-import Compare from './components/Compare'
+import Sorting from './components/sorting'
+import { reduceState } from './lib/Reducer'
 
 enum AppState {
   Input,
   Sorting,
   Complete
-}
-
-interface ComparedAction {
-  type: "compared"
-  result: ComparisonResult<String>
-}
-
-type Action = ComparedAction
-
-
-function reduceState<A extends Action>(state: StateManager<String>, action: A): StateManager<String> {
-  switch (action.type) {
-    case "compared": {
-      // Add the new comparison results
-      const newState = state.addComparison(action.result)
-      // Re-attempt inserting the new element
-      return newState.iterate(action.result.elem)
-    }
-  }
 }
 
 export default function Home() {
@@ -57,19 +38,7 @@ export default function Home() {
       <div className="place-items-center text-align-center">
         <h1>human-sort</h1>
         <h2>relative sorting made simple</h2>
-        {
-          O.match(
-            () => <div>Sorting complete!</div>,
-            (cmp: Comparison<String>) => <Compare comparison={cmp} onCompare={(cr: ComparisonResult<String>) => dispatch({ type: "compared", result: cr })} />
-          )(state.data.nextComparison)
-        }
-        <ul id="list">
-          {
-            state.data.tree.sorted().map((elem: String) =>
-              <li>{elem}</li>
-            )
-          }
-        </ul>
+        <Sorting state={state} reducer={dispatch} />
       </div>
     </main >
   )

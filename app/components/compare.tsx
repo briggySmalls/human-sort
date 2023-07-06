@@ -11,8 +11,8 @@ export default function Compare<T extends {}>({ comparison, onCompare }: Props<T
             <div id="question">
                 <p>Which is larger?</p>
             </div>
-            <button id="first" type="button" onClick={() => onCompare(new ComparisonResult(comparison.nodeValue, comparison.elem, false))}>{comparison.elem}</button>
-            <button id="second" type="button" onClick={() => onCompare(new ComparisonResult(comparison.nodeValue, comparison.elem, true))}>{comparison.nodeValue}</button>
+            <button id="first" type="button" onClick={() => onCompare(new ComparisonResult(comparison.nodeValue, comparison.elem, false))}>{comparison.elem.toString()}</button>
+            <button id="second" type="button" onClick={() => onCompare(new ComparisonResult(comparison.nodeValue, comparison.elem, true))}>{comparison.nodeValue.toString()}</button>
         </div>
     )
 }
