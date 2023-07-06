@@ -1,45 +1,34 @@
 "use client";
 
-import { useReducer } from 'react';
-import { StateManager } from './lib/State'
-import * as O from 'fp-ts/Option'
-import { EmptyTree } from './lib/Tree'
+import React, { useState } from 'react';
+
 import Sorting from './components/sorting'
-import { reduceState } from './lib/Reducer'
+import Inputting from './components/inputting'
 
 enum AppState {
-  Inputing,
+  Inputting,
   Sorting,
   Complete
 }
 
 export default function Home() {
-  const options = [
-    "First",
-    "Second",
-    "Third",
-    "Fourth",
-    "Fifth",
-  ]
-  const initialState: StateManager<String> = new StateManager<String>(
-    {
-      tree: new EmptyTree<String>,
-      nextComparison: O.none,
-      comparisonResults: [],
-      elementsToInsert: options,
-    }
-  )
-  console.log(initialState.data)
+  const [appState, setAppState] = useState(AppState.Inputting)
+  const [options, setOptions] = useState(new Array<String>())
 
-  const [state, dispatch] = useReducer(reduceState, initialState)
-
-  const appState = AppState.Sorting
+  function onSubmitted(items: String[]) {
+    setOptions(items)
+    setAppState(AppState.Sorting)
+  }
 
   function createAppComponent(appState: AppState): JSX.Element {
     switch (appState) {
+      case (AppState.Inputting):
+        return (
+          <Inputting onSubmitted={onSubmitted} />
+        )
       case (AppState.Sorting):
         return (
-          <Sorting state={state} reducer={dispatch} />
+          <Sorting options={options} />
         )
     }
   }

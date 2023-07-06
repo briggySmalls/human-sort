@@ -3,13 +3,26 @@ import { Comparison, ComparisonResult } from '../lib/Comparison'
 import { Action } from '../lib/Reducer'
 import * as O from 'fp-ts/Option'
 import Compare from './compare'
+import { useReducer } from 'react';
+import { reduceState } from '../lib/Reducer'
+import { EmptyTree } from '../lib/Tree'
 
 interface Props {
-    state: StateManager<String>
-    reducer: (action: Action) => void
+    options: String[]
 }
 
-export default function Sorting({ state, reducer }: Props): JSX.Element {
+export default function Sorting({ options }: Props): JSX.Element {
+    const initialState: StateManager<String> = new StateManager<String>(
+        {
+            tree: new EmptyTree<String>,
+            nextComparison: O.none,
+            comparisonResults: [],
+            elementsToInsert: options,
+        }
+    )
+
+    const [state, reducer] = useReducer(reduceState, initialState)
+
     return (
         <>
             {
