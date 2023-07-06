@@ -8,7 +8,7 @@ import Sorting from './components/sorting'
 import { reduceState } from './lib/Reducer'
 
 enum AppState {
-  Input,
+  Inputing,
   Sorting,
   Complete
 }
@@ -33,12 +33,23 @@ export default function Home() {
 
   const [state, dispatch] = useReducer(reduceState, initialState)
 
+  const appState = AppState.Sorting
+
+  function createAppComponent(appState: AppState): JSX.Element {
+    switch (appState) {
+      case (AppState.Sorting):
+        return (
+          <Sorting state={state} reducer={dispatch} />
+        )
+    }
+  }
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
       <div className="place-items-center text-align-center">
         <h1>human-sort</h1>
         <h2>relative sorting made simple</h2>
-        <Sorting state={state} reducer={dispatch} />
+        {createAppComponent(appState)}
       </div>
     </main >
   )
