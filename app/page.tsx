@@ -5,6 +5,13 @@ import { StateManager } from './lib/State'
 import * as O from 'fp-ts/Option'
 import { EmptyTree } from './lib/Tree'
 import { Comparison, ComparisonResult } from './lib/Comparison'
+import Compare from './components/Compare'
+
+enum AppState {
+  Input,
+  Sorting,
+  Complete
+}
 
 interface ComparedAction {
   type: "compared"
@@ -53,14 +60,7 @@ export default function Home() {
         {
           O.match(
             () => <div>Sorting complete!</div>,
-            (cmp: Comparison<String>) =>
-              <div id="controls" className="card">
-                <div id="question">
-                  <p>Which is larger?</p>
-                </div>
-                <button id="first" type="button" onClick={() => dispatch({ type: "compared", result: new ComparisonResult(cmp.nodeValue, cmp.elem, false) })}>{cmp.elem}</button>
-                <button id="second" type="button" onClick={() => dispatch({ type: "compared", result: new ComparisonResult(cmp.nodeValue, cmp.elem, true) })}>{cmp.nodeValue}</button>
-              </div>
+            (cmp: Comparison<String>) => <Compare comparison={cmp} onCompare={(cr: ComparisonResult<String>) => dispatch({ type: "compared", result: cr })} />
           )(state.data.nextComparison)
         }
         <ul id="list">
