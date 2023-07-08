@@ -27,17 +27,19 @@ export default function Sorting({ options }: Props): JSX.Element {
         <>
             {
                 O.match(
-                    () => <div>Sorting complete!</div>,
+                    () => <div className="text-center m-6 text-gray-500 dark:text-gray-400">Sorting complete!</div>,
                     (cmp: Comparison<String>) => <Compare comparison={cmp} onCompare={(cr: ComparisonResult<String>) => reducer({ type: "compared", result: cr })} />
                 )(state.data.nextComparison)
             }
-            < ul id="list" >
-                {
-                    state.data.tree.sorted().map((elem: String) =>
-                        <li>{elem.toString()}</li>
-                    )
-                }
-            </ul >
+            <div>
+                <ul className="list-decimal block p-6 border border-gray-200 rounded-lg shadow dark:border-gray-700">
+                    {
+                        state.data.tree.sorted().map((elem: String) =>
+                            <li>{elem.toString()}</li>
+                        )
+                    }
+                </ul>
+            </div>
         </>
     )
 }
