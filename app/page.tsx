@@ -30,6 +30,8 @@ export default function Home() {
         return (
           <Sorting options={options} />
         )
+      default:
+        return (<></>)
     }
   }
 

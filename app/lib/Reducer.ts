@@ -6,12 +6,7 @@ interface ComparedAction {
     result: ComparisonResult<String>
 }
 
-interface InputtedAction {
-    type: "inputted"
-    items: String[]
-}
-
-type Action = ComparedAction | InputtedAction
+type Action = ComparedAction
 
 
 function reduceState<A extends Action>(state: StateManager<String>, action: A): StateManager<String> {
@@ -21,9 +16,6 @@ function reduceState<A extends Action>(state: StateManager<String>, action: A): 
             const newState = state.addComparison(action.result)
             // Re-attempt inserting the new element
             return newState.iterate(action.result.elem)
-        }
-        case "inputted": {
-
         }
     }
 }
