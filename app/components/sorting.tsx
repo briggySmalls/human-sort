@@ -34,8 +34,8 @@ export default function Sorting({ options }: Props): JSX.Element {
             <div>
                 <ul className="list-decimal block p-6 border border-gray-200 rounded-lg shadow dark:border-gray-700">
                     {
-                        state.data.tree.sorted().map((elem: String) =>
-                            <li>{elem.toString()}</li>
+                        state.data.tree.sorted().map((elem: String, index: number) =>
+                            <li key={index}>{elem.toString()}</li>
                         )
                     }
                 </ul>
