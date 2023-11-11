@@ -20,15 +20,17 @@ export default function Home() {
     setAppState(AppState.Sorting)
   }
 
+  function backToInputting() { setAppState(AppState.Inputting) }
+
   function createAppComponent(appState: AppState): JSX.Element {
     switch (appState) {
       case (AppState.Inputting):
         return (
-          <Inputting onSubmitted={onSubmitted} />
+          <Inputting options={options} onSubmitted={onSubmitted} />
         )
       case (AppState.Sorting):
         return (
-          <Sorting options={options} />
+          <Sorting options={options} onBack={backToInputting} />
         )
       default:
         return (<></>)

@@ -1,11 +1,12 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 
 interface Props {
+    options: String[]
     onSubmitted: (items: String[]) => void
 }
 
-export default function Inputting({ onSubmitted }: Props): JSX.Element {
-    const [text, setText] = useState('');
+export default function Inputting({ options, onSubmitted }: Props): JSX.Element {
+    const [text, setText] = useState(options.join("\n"));
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
