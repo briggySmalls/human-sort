@@ -1,7 +1,7 @@
 import * as O from 'fp-ts/Option'
 import * as E from 'fp-ts/Either'
 import * as A from 'fp-ts/Array'
-import { Tree } from './Tree'
+import { Tree, EmptyTree } from './Tree'
 import { Comparison, ComparisonResult } from './Comparison'
 
 /**
@@ -26,6 +26,20 @@ class StateManager<T> {
         } else {
             this.data = state
         }
+    }
+
+    /**
+     * Helper function for initialising state with a set of options
+     * @param options Options to be sorted
+     * @returns A new state manager
+     */
+    static init<T>(options: T[]): StateManager<T> {
+        return new StateManager({
+            tree: new EmptyTree<T>,
+            nextComparison: O.none,
+            comparisonResults: [],
+            elementsToInsert: options,
+        }, true)
     }
 
     /**

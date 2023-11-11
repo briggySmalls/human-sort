@@ -12,14 +12,7 @@ interface Props {
 }
 
 export default function Sorting({ options }: Props): JSX.Element {
-    const initialState: StateManager<String> = new StateManager<String>(
-        {
-            tree: new EmptyTree<String>,
-            nextComparison: O.none,
-            comparisonResults: [],
-            elementsToInsert: options,
-        }
-    )
+    const initialState: StateManager<String> = StateManager.init(options)
 
     const [state, reducer] = useReducer(reduceState, initialState)
 
