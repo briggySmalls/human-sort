@@ -11,12 +11,7 @@ type Action = ComparedAction
 
 function reduceState<A extends Action>(state: StateManager<String>, action: A): StateManager<String> {
     switch (action.type) {
-        case "compared": {
-            // Add the new comparison results
-            const newState = state.addComparison(action.result)
-            // Re-attempt inserting the new element
-            return newState.iterate(action.result.elem)
-        }
+        case "compared": { return state.addComparison(action.result) }
     }
 }
 

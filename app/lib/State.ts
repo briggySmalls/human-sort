@@ -45,15 +45,6 @@ class StateManager<T> {
     }
 
     /**
-     * Attempt to iterate state (inserting an element to the tree)
-     * @param elem Element to be inserted
-     * @returns The iterated state
-     */
-    public iterate(elem: T): StateManager<T> {
-        return new StateManager(iterate(this.data, elem), false)
-    }
-
-    /**
      * Add the outcome of a human comparison
      * @param cr result of comparison
      * @returns The state, with comparison added
@@ -63,7 +54,7 @@ class StateManager<T> {
             ...this.data,
             comparisonResults: A.append(cr)(this.data.comparisonResults)
         }
-        return new StateManager(newState, false)
+        return new StateManager(newState, true)
     }
 }
 
