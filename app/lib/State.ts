@@ -12,6 +12,7 @@ interface State<T> {
     nextComparison: O.Option<Comparison<T>>
     comparisonResults: ComparisonResult<T>[]
     elementsToInsert: T[]
+    elementsInserted: number
 }
 
 /**
@@ -39,6 +40,7 @@ class StateManager<T> {
             nextComparison: O.none,
             comparisonResults: [],
             elementsToInsert: options,
+            elementsInserted: 0,
         }, true)
     }
 
@@ -65,23 +67,14 @@ class StateManager<T> {
     }
 }
 
-function split<T>(arr: T[]): O.Option<[T, T[]]> {
-    if (arr.length > 0) {
-        const [head, tail] = A.splitAt(1)(arr)
-        return O.some([head[0], tail])
-    } else {
-        return O.none
-    }
-}
-
 /**
  * Inserts the next element to the tree, if possible
  * @param state The current state
  * @returns The state, iterated
  */
 function tryInsertNext<T>(state: State<T>): State<T> {
-    const maybeElementsToInsert = split(state.elementsToInsert)
-    console.log(maybeElementsToInsert)
+    const maybeElementToInsert = A.lookup(state.elementsInserted)(state.elementsToInsert)
+    console.log(maybeElementToInsert)
     return O.match(
         () => {
             // There are no more elements to insert!
@@ -90,15 +83,11 @@ function tryInsertNext<T>(state: State<T>): State<T> {
                 nextComparison: O.none
             }
         },
-        ([head, tail]: [T, T[]]) => {
+        (next: T) => {
             // We've got more elements to insert
-            const newState = {
-                ...state,
-                elementsToInsert: tail
-            }
-            return iterate(newState, head)
+            return iterate(state, next)
         }
-    )(maybeElementsToInsert)
+    )(maybeElementToInsert)
 }
 
 /**
@@ -121,7 +110,8 @@ function iterate<T>(state: State<T>, elem: T): State<T> {
             // We have successfully added the element to the tree
             const newState = {
                 ...state,
-                tree: tree
+                tree: tree,
+                elementsInserted: state.elementsInserted + 1,
             }
             // Proceed until we need user input (or we're complete!)
             return tryInsertNext(newState)
