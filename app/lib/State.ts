@@ -4,6 +4,9 @@ import * as A from 'fp-ts/Array'
 import { Tree } from './Tree'
 import { Comparison, ComparisonResult } from './Comparison'
 
+/**
+ * State that evolves whilst sorting
+ */
 interface State<T> {
     tree: Tree<T>
     nextComparison: O.Option<Comparison<T>>
@@ -11,6 +14,9 @@ interface State<T> {
     elementsToInsert: T[]
 }
 
+/**
+ * Manager for state evolution
+ */
 class StateManager<T> {
     public readonly data: State<T>
 
@@ -22,10 +28,20 @@ class StateManager<T> {
         }
     }
 
+    /**
+     * Attempt to iterate state (inserting an element to the tree)
+     * @param elem Element to be inserted
+     * @returns The iterated state
+     */
     public iterate(elem: T): StateManager<T> {
         return new StateManager(iterate(this.data, elem), false)
     }
 
+    /**
+     * Add the outcome of a human comparison
+     * @param cr result of comparison
+     * @returns The state, with comparison added
+     */
     public addComparison(cr: ComparisonResult<T>): StateManager<T> {
         const newState = {
             ...this.data,
@@ -46,6 +62,8 @@ function split<T>(arr: T[]): O.Option<[T, T[]]> {
 
 /**
  * Inserts the next element to the tree, if possible
+ * @param state The current state
+ * @returns The state, iterated
  */
 function tryInsertNext<T>(state: State<T>): State<T> {
     const maybeElementsToInsert = split(state.elementsToInsert)
@@ -91,6 +109,7 @@ function iterate<T>(state: State<T>, elem: T): State<T> {
                 ...state,
                 tree: tree
             }
+            // Proceed until we need user input (or we're complete!)
             return tryInsertNext(newState)
         }
     )(treeOrComparison)

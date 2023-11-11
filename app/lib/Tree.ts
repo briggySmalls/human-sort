@@ -18,6 +18,12 @@ class EmptyTree<T> implements Tree<T> {
 class Node<T> implements Tree<T> {
     constructor(private value: T, private left: Tree<T>, private right: Tree<T>) { }
 
+    /**
+     * Attempt to insert the element by using supplied comparison results
+     * @param elem Element to be inserted
+     * @param comparisonResults Comparisons between elements to aid insertion
+     * @returns New tree with element inserted, or an unknown comparison required for insertion
+     */
     iterate(elem: T, comparisonResults: ComparisonResult<T>[]): E.Either<Comparison<T>, Tree<T>> {
         return this.tryInsertIntoChildren(elem, comparisonResults)
     }
