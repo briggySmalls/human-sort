@@ -21,12 +21,8 @@ interface State<T> {
 class StateManager<T> {
     public readonly data: State<T>
 
-    constructor(state: State<T>, normalise: Boolean = true) {
-        if (normalise) {
-            this.data = tryInsertNext(state)
-        } else {
-            this.data = state
-        }
+    constructor(state: State<T>) {
+        this.data = tryInsertNext(state)
     }
 
     /**
@@ -46,7 +42,7 @@ class StateManager<T> {
             elementsInserted: 0,
         }
         console.log(initialState)
-        const endState = new StateManager(initialState, true)
+        const endState = new StateManager(initialState)
         console.log(endState.data)
         return endState
     }
@@ -65,7 +61,7 @@ class StateManager<T> {
             ...this.data,
             comparisonResults: A.append(cr)(this.data.comparisonResults)
         }
-        return new StateManager(newState, true)
+        return new StateManager(newState)
     }
 
     public undo(): StateManager<T> {
@@ -75,7 +71,7 @@ class StateManager<T> {
             tree: new EmptyTree<T>, // Reset the tree
             elementsInserted: 0,    // Re-insert from the beginning
         }
-        return new StateManager(newState, true)
+        return new StateManager(newState)
     }
 }
 
