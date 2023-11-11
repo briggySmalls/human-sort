@@ -19,8 +19,8 @@ export default function Home() {
   const [state, reducer] = useReducer(reduceState, initialState)
   const [appState, setAppState] = useState(AppState.Inputting)
 
-  function onSubmitted(items: String[]) {
-    reducer({type: "init", options: items})
+  function onSubmitted(items: String[], sortedItems:  String[]) {
+    reducer({type: "init", options: items, sortedOptions: sortedItems})
     setAppState(AppState.Sorting)
   }
 
@@ -30,7 +30,7 @@ export default function Home() {
     switch (appState) {
       case (AppState.Inputting):
         return (
-          <Inputting options={state.data.elementsToInsert} onSubmitted={onSubmitted} />
+          <Inputting options={state.uninsertedElements} sortedOptions={state.data.tree.sorted()} onSubmitted={onSubmitted} />
         )
       case (AppState.Sorting):
         return (

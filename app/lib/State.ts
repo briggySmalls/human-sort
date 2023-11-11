@@ -34,17 +34,26 @@ class StateManager<T> {
      * @param options Options to be sorted
      * @returns A new state manager
      */
-    static init<T>(options: T[]): StateManager<T> {
-        return new StateManager({
+    static init<T>(options: T[], sortedOptions: T[] = []): StateManager<T> {
+        const allOptions = A.concat(options)(sortedOptions)
+        const pairs = getAllPairs(sortedOptions)
+        const comparisonResults = pairs.map(ps => new ComparisonResult(ps[0], ps[1], false))
+        const initialState = {
             tree: new EmptyTree<T>,
             nextComparison: O.none,
-            comparisonResults: [],
-            elementsToInsert: options,
+            comparisonResults: comparisonResults,
+            elementsToInsert: allOptions,
             elementsInserted: 0,
-        }, true)
+        }
+        console.log(initialState)
+        const endState = new StateManager(initialState, true)
+        console.log(endState.data)
+        return endState
     }
 
     public get canUndo(): Boolean { return this.data.comparisonResults.length > 0 }
+
+    public get uninsertedElements(): T[] { return A.dropLeft(this.data.elementsInserted)(this.data.elementsToInsert) }
 
     /**
      * Add the outcome of a human comparison
@@ -70,6 +79,20 @@ class StateManager<T> {
     }
 }
 
+function getAllPairs<T>(arr: T[]): [T, T][] {
+    function pairUpIfGreater(idx: number, candidate: T): [T, T][] {
+        const arrOfMaybePairs: O.Option<[T, T]>[] = A.mapWithIndex((i: number, x: T) => {
+            if (i > idx) {
+                const t: [T, T] = [candidate, x]
+                return O.some(t)
+            }
+            else return O.none
+        })(arr)
+        return A.compact(arrOfMaybePairs)
+    }
+    return A.flatten(A.mapWithIndex(pairUpIfGreater)(arr))
+}
+
 /**
  * Inserts the next element to the tree, if possible
  * @param state The current state
@@ -77,7 +100,6 @@ class StateManager<T> {
  */
 function tryInsertNext<T>(state: State<T>): State<T> {
     const maybeElementToInsert = A.lookup(state.elementsInserted)(state.elementsToInsert)
-    console.log(maybeElementToInsert)
     return O.match(
         () => {
             // There are no more elements to insert!
