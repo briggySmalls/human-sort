@@ -16,6 +16,8 @@ export default function Sorting({ options }: Props): JSX.Element {
 
     const [state, reducer] = useReducer(reduceState, initialState)
 
+    function undo() { reducer({ type: "undo" }) }
+
     return (
         <>
             {
@@ -32,6 +34,11 @@ export default function Sorting({ options }: Props): JSX.Element {
                         )
                     }
                 </ul>
+                { state.canUndo && <div>
+                    <button className="p-6 m-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700" onClick={undo}>
+                        ↩️ undo
+                    </button>
+                </div>}
             </div>
         </>
     )

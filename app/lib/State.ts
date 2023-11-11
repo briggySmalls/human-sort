@@ -44,6 +44,8 @@ class StateManager<T> {
         }, true)
     }
 
+    public get canUndo(): Boolean { return this.data.comparisonResults.length > 0 }
+
     /**
      * Add the outcome of a human comparison
      * @param cr result of comparison
@@ -53,6 +55,16 @@ class StateManager<T> {
         const newState = {
             ...this.data,
             comparisonResults: A.append(cr)(this.data.comparisonResults)
+        }
+        return new StateManager(newState, true)
+    }
+
+    public undo(): StateManager<T> {
+        const newState = {
+            ...this.data,
+            comparisonResults: A.dropRight(1)(this.data.comparisonResults),
+            tree: new EmptyTree<T>, // Reset the tree
+            elementsInserted: 0,    // Re-insert from the beginning
         }
         return new StateManager(newState, true)
     }
