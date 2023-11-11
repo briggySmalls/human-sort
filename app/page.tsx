@@ -1,6 +1,9 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useReducer } from 'react';
+
+import { StateManager } from './lib/State'
+import { reduceState } from './lib/Reducer'
 
 import Sorting from './components/sorting'
 import Inputting from './components/inputting'
@@ -12,11 +15,12 @@ enum AppState {
 }
 
 export default function Home() {
+  const initialState: StateManager<String> = StateManager.init(new Array<String>())
+  const [state, reducer] = useReducer(reduceState, initialState)
   const [appState, setAppState] = useState(AppState.Inputting)
-  const [options, setOptions] = useState(new Array<String>())
 
   function onSubmitted(items: String[]) {
-    setOptions(items)
+    reducer({type: "init", options: items})
     setAppState(AppState.Sorting)
   }
 
@@ -26,11 +30,11 @@ export default function Home() {
     switch (appState) {
       case (AppState.Inputting):
         return (
-          <Inputting options={options} onSubmitted={onSubmitted} />
+          <Inputting options={state.data.elementsToInsert} onSubmitted={onSubmitted} />
         )
       case (AppState.Sorting):
         return (
-          <Sorting options={options} onBack={backToInputting} />
+          <Sorting state={state} reducer={reducer} onBack={backToInputting} />
         )
       default:
         return (<></>)

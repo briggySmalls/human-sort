@@ -3,20 +3,14 @@ import { Comparison, ComparisonResult } from '../lib/Comparison'
 import { Action } from '../lib/Reducer'
 import * as O from 'fp-ts/Option'
 import Compare from './compare'
-import { useReducer } from 'react';
-import { reduceState } from '../lib/Reducer'
-import { EmptyTree } from '../lib/Tree'
 
 interface Props {
-    options: String[]
+    state: StateManager<String>
+    reducer: React.Dispatch<Action>
     onBack: () => void
 }
 
-export default function Sorting({ options, onBack }: Props): JSX.Element {
-    const initialState: StateManager<String> = StateManager.init(options)
-
-    const [state, reducer] = useReducer(reduceState, initialState)
-
+export default function Sorting({ state, reducer, onBack }: Props): JSX.Element {
     function undo() { reducer({ type: "undo" }) }
 
     return (
