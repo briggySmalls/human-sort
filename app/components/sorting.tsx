@@ -42,7 +42,7 @@ export default function Sorting({ state, reducer, onBack }: Props): JSX.Element 
                         )
                     }
                 </ul>
-                <div className="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-5">
+                <div className="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-3 gap-5">
                     <div>
                         <button
                             className={controlButtonClassNames(state.canUndo)}
