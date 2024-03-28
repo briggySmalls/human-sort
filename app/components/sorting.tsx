@@ -3,7 +3,7 @@ import { Comparison, ComparisonResult } from '../lib/Comparison'
 import { Action } from '../lib/Reducer'
 import * as O from 'fp-ts/Option'
 import Compare from './compare'
-import { stat } from 'fs'
+import { toCsv } from '../lib/Csv'
 
 interface Props {
     state: StateManager<String>
@@ -17,7 +17,13 @@ export default function Sorting({ state, reducer, onBack }: Props): JSX.Element 
     function controlButtonClassNames(isEnabled: Boolean): string {
         const primaryClasses: string = "m-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
         if (isEnabled) { return primaryClasses }
-        else { return primaryClasses + " opacity-50 cursor-not-allowed"}
+        else { return primaryClasses + " opacity-50 cursor-not-allowed" }
+    }
+
+    function csvDataEncodedURL() {
+        const csv = toCsv(state.data)
+        var data = new Blob([csv]);
+        return URL.createObjectURL(data);
     }
 
     return (
@@ -50,6 +56,18 @@ export default function Sorting({ state, reducer, onBack }: Props): JSX.Element 
                             onClick={onBack}>
                             back
                         </button>
+                    </div>
+                    <div>
+                        <a
+                            download="humansort.csv"
+                            type='text/csv'
+                            href={csvDataEncodedURL()}
+                        >
+                            <button
+                                className={controlButtonClassNames(true)}>
+                                export
+                            </button>
+                        </a>
                     </div>
                 </div>
             </div>
