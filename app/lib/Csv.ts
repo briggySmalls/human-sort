@@ -3,8 +3,8 @@ import * as A from 'fp-ts/Array';
 import { pipe } from 'fp-ts/function'
 
 export function toCsv(state: State<String>): string {
-    const list = state.tree.sorted()
-    const ranking = new Map(pipe(list, A.mapWithIndex((i: number, s: String) =>
+    const list = state.allElementsCanonical
+    const ranking = new Map(pipe(state.tree.sorted(), A.mapWithIndex((i: number, s: String) =>
         [s, i]
     )))
     const lines = pipe(list, A.map((elem) => {
