@@ -3,6 +3,7 @@ import * as E from 'fp-ts/Either'
 import * as A from 'fp-ts/Array'
 import { Tree, EmptyTree } from './Tree'
 import { Comparison, ComparisonResult } from './Comparison'
+import { pipe } from 'fp-ts/function'
 
 /**
  * State that evolves whilst sorting
@@ -11,7 +12,7 @@ interface State<T> {
     tree: Tree<T>
     nextComparison: O.Option<Comparison<T>>
     comparisonResults: ComparisonResult<T>[]
-    elementsToInsert: T[]
+    allElementsCanonical: T[]
     elementsInserted: number
 }
 
@@ -38,7 +39,7 @@ class StateManager<T> {
             tree: new EmptyTree<T>,
             nextComparison: O.none,
             comparisonResults: comparisonResults,
-            elementsToInsert: allOptions,
+            allElementsCanonical: allOptions,
             elementsInserted: 0,
         }
         console.log(initialState)
@@ -49,7 +50,7 @@ class StateManager<T> {
 
     public get canUndo(): Boolean { return this.data.comparisonResults.length > 0 }
 
-    public get uninsertedElements(): T[] { return A.dropLeft(this.data.elementsInserted)(this.data.elementsToInsert) }
+    public get uninsertedElements(): T[] { return A.dropLeft(this.data.elementsInserted)(this.data.allElementsCanonical) }
 
     /**
      * Add the outcome of a human comparison
@@ -95,7 +96,7 @@ function getAllPairs<T>(arr: T[]): [T, T][] {
  * @returns The state, iterated
  */
 function tryInsertNext<T>(state: State<T>): State<T> {
-    const maybeElementToInsert = A.lookup(state.elementsInserted)(state.elementsToInsert)
+    const maybeElementToInsert = A.lookup(state.elementsInserted)(state.allElementsCanonical)
     return O.match(
         () => {
             // There are no more elements to insert!
