@@ -28,7 +28,6 @@ export default function Compare<T extends {}>({ comparison, onCompare }: Props<T
 
     return (
         <div>
-            <p className="text-center text-gray-500 dark:text-gray-400">Which is larger?</p>
             <div className="p-10 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 gap-5">
                 {buttons}
             </div>

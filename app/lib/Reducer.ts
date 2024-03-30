@@ -3,13 +3,13 @@ import { StateManager } from './State'
 
 interface InitAction {
     type: "init"
-    options: String[]
-    sortedOptions: String[]
+    options: string[]
+    sortedOptions: string[]
 }
 
 interface ComparedAction {
     type: "compared"
-    result: ComparisonResult<String>
+    result: ComparisonResult<string>
 }
 
 interface UndoAction {
@@ -19,7 +19,7 @@ interface UndoAction {
 type Action = InitAction | ComparedAction | UndoAction
 
 
-function reduceState<A extends Action>(state: StateManager<String>, action: A): StateManager<String> {
+function reduceState<A extends Action>(state: StateManager<string>, action: A): StateManager<string> {
     switch (action.type) {
         case "init": { return StateManager.init(action.options, action.sortedOptions) }
         case "compared": { return state.addComparison(action.result) }

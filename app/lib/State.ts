@@ -28,18 +28,17 @@ class StateManager<T> {
 
     /**
      * Helper function for initialising state with a set of options
-     * @param options Options to be sorted
+     * @param allElementsCanonical Options to be sorted, in a canonical order
      * @returns A new state manager
      */
-    static init<T>(options: T[], sortedOptions: T[] = []): StateManager<T> {
-        const allOptions = A.concat(options)(sortedOptions)
+    static init<T>(allElementsCanonical: T[], sortedOptions: T[] = []): StateManager<T> {
         const pairs = getAllPairs(sortedOptions)
         const comparisonResults = pairs.map(ps => new ComparisonResult(ps[0], ps[1], false))
         const initialState = {
             tree: new EmptyTree<T>,
             nextComparison: O.none,
             comparisonResults: comparisonResults,
-            allElementsCanonical: allOptions,
+            allElementsCanonical: allElementsCanonical,
             elementsInserted: 0,
         }
         console.log(initialState)
