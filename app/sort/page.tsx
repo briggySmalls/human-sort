@@ -11,8 +11,8 @@ import { StateManager } from '../lib/State'
 import { reduceState } from '../lib/Reducer'
 import { fromCsv } from '../lib/Csv'
 
-import Sorting from '../components/sorting'
-import Inputting from '../components/inputting'
+import Sorting from './components/sorting'
+import Inputting from './components/inputting'
 
 enum AppState {
   Inputting,
@@ -38,14 +38,8 @@ export default function Home() {
   const sortedItems = state.data.tree.sorted()
   const unsortedItems = pipe(allItems, A.difference(S.Eq)(sortedItems))
 
-  function onSubmitted(userChosenAdditionalItems: string[]) {
-    // This is either from an import, or because a user navigated back partway through
-    const canonicalSoFar = state.data.allElementsCanonical
-    // Determine user choices not already expected (e.g. if user kept unsorted items having navigated back)
-    const newUserChoices = pipe(userChosenAdditionalItems, A.difference(S.Eq)(canonicalSoFar))
-    // Construct a new canonical with the new user choices
-    const allElementsCanonical = pipe(state.data.allElementsCanonical, A.concat(newUserChoices))
-    reducer({ type: "init", options: allElementsCanonical, sortedOptions: sortedItems })
+  function onSubmitted(userChosenItems: string[]) {
+    reducer({ type: "updateElements", options: userChosenItems })
     setAppState(AppState.Sorting)
   }
 

@@ -7,6 +7,11 @@ interface InitAction {
     sortedOptions: string[]
 }
 
+interface UpdateElementsAction {
+    type: "updateElements"
+    options: string[]
+}
+
 interface ComparedAction {
     type: "compared"
     result: ComparisonResult<string>
@@ -16,12 +21,13 @@ interface UndoAction {
     type: "undo"
 }
 
-type Action = InitAction | ComparedAction | UndoAction
+type Action = InitAction | UpdateElementsAction | ComparedAction | UndoAction
 
 
 function reduceState<A extends Action>(state: StateManager<string>, action: A): StateManager<string> {
     switch (action.type) {
         case "init": { return StateManager.init(action.options, action.sortedOptions) }
+        case "updateElements": { return state.updateElements(action.options) }
         case "compared": { return state.addComparison(action.result) }
         case "undo": { return state.undo() }
     }

@@ -1,4 +1,4 @@
-import { Comparison, ComparisonResult } from '../lib/Comparison'
+import { Comparison, ComparisonResult } from '../../lib/Comparison'
 
 interface Props<T> {
     comparison: Comparison<T>

@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, useRef, FormEvent, KeyboardEvent } from 'react';
 
 import * as A from 'fp-ts/Array'
 import * as S from 'fp-ts/String'
@@ -11,25 +11,56 @@ interface Props {
 }
 
 export default function Inputting({ allItems, additionalItems: unsortedItems, onSubmitted }: Props): JSX.Element {
-    const [text, setText] = useState(unsortedItems.join("\n"));
+    const [items, setItems] = useState(allItems);
+    const textAreaRef = useRef<HTMLTextAreaElement | null>(null);
 
     function optionsFromText(text: string): string[] {
         const arr = text.split("\n")
-        return A.filter(e => e != "")(arr)
+        return pipe(
+            arr,
+            A.filter(e => e != ""),
+            A.uniq(S.Eq)
+        )
     }
 
     const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        onSubmitted(optionsFromText(text))
+        const mergedItems = mergeItemsWithText(textAreaRef?.current?.value)
+        console.log(mergedItems)
+        onSubmitted(mergedItems)
+    }
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLTextAreaElement>) => {
+        if (event.key === 'Enter') {
+            const text = event.currentTarget.value
+            updateItems(text)
+            event.currentTarget.value = ""
+            event.preventDefault()
+        }
     };
 
-    const sortedItems = pipe(allItems, A.difference(S.Eq)(unsortedItems))
+    const updateItems = (text: string) => {
+        const mergedItems = mergeItemsWithText(text)
+        setItems(mergedItems)
+    }
 
-    const sortedOptionsList = sortedItems.length > 0 && (
+    const mergeItemsWithText = (text: string | null | undefined): string[] => {
+        if (text) {
+            const additionalOptions = optionsFromText(text)
+            return pipe(items, A.concat(additionalOptions))
+        }
+        return items
+    }
+
+    const handleItemDelete = (item: string) => {
+        return () => setItems(pipe(items, A.filter((s) => s !== item)))
+    }
+
+    const optionsList = items.length > 0 && (
         <ul>
             {
-                sortedItems.map((s) =>
-                    <ol>{s}</ol>
+                items.map((s) =>
+                    <ol key={s}>{s}<button className="ml-2" onClick={handleItemDelete(s)}>🗑️</button></ol>
                 )
             }
         </ul>
@@ -44,12 +75,12 @@ export default function Inputting({ allItems, additionalItems: unsortedItems, on
                 Provide elements to be sorted
             </h2>
             <form onSubmit={handleSubmit}>
-                {sortedOptionsList}
+                {optionsList}
                 <textarea
                     className="block p-2.5 w-full h-96 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                    value={text}
-                    onChange={(event: ChangeEvent<HTMLTextAreaElement>) => setText(event.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Enter options to be sorted, one per line"
+                    ref={textAreaRef}
                 />
                 <button
                     className="m-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" type="submit"

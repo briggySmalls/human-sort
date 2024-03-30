@@ -1,9 +1,11 @@
 import * as O from 'fp-ts/Option'
 import * as E from 'fp-ts/Either'
 import * as A from 'fp-ts/Array'
+import * as EE from 'fp-ts/Eq'
 import { Tree, EmptyTree } from './Tree'
 import { Comparison, ComparisonResult } from './Comparison'
 import { pipe } from 'fp-ts/function'
+import { Stat } from '@chakra-ui/react'
 
 /**
  * State that evolves whilst sorting
@@ -34,22 +36,34 @@ class StateManager<T> {
     static init<T>(allElementsCanonical: T[], sortedOptions: T[] = []): StateManager<T> {
         const pairs = getAllPairs(sortedOptions)
         const comparisonResults = pairs.map(ps => new ComparisonResult(ps[0], ps[1], false))
+        return this.initWithComparisons(allElementsCanonical, comparisonResults)
+    }
+
+    static initWithComparisons<T>(allElementsCanonical: T[], comparisons: ComparisonResult<T>[]): StateManager<T> {
         const initialState = {
             tree: new EmptyTree<T>,
             nextComparison: O.none,
-            comparisonResults: comparisonResults,
+            comparisonResults: comparisons,
             allElementsCanonical: allElementsCanonical,
             elementsInserted: 0,
         }
-        console.log(initialState)
-        const endState = new StateManager(initialState)
-        console.log(endState.data)
-        return endState
+        return new StateManager(initialState)
     }
 
     public get canUndo(): Boolean { return this.data.comparisonResults.length > 0 }
 
     public get uninsertedElements(): T[] { return A.dropLeft(this.data.elementsInserted)(this.data.allElementsCanonical) }
+
+    public updateElements(newElements: T[]): StateManager<T> {
+        // Determine which elements are being removed
+        const toRemove = pipe(this.data.allElementsCanonical, A.difference(EE.eqStrict)(newElements)) as T[]
+        // Strip out irrelevant comparisons
+        const comparisons = pipe(
+            this.data.comparisonResults,
+            A.filter((cr) => !toRemove.includes(cr.elem) && !toRemove.includes(cr.nodeValue))
+        )
+        return StateManager.initWithComparisons(newElements, comparisons)
+    }
 
     /**
      * Add the outcome of a human comparison

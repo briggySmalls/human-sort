@@ -1,9 +1,9 @@
-import { StateManager } from '../lib/State'
-import { Comparison, ComparisonResult } from '../lib/Comparison'
-import { Action } from '../lib/Reducer'
+import { StateManager } from '../../lib/State'
+import { Comparison, ComparisonResult } from '../../lib/Comparison'
+import { Action } from '../../lib/Reducer'
 import * as O from 'fp-ts/Option'
 import Compare from './compare'
-import { toCsv } from '../lib/Csv'
+import { toCsv } from '../../lib/Csv'
 
 interface Props {
     state: StateManager<string>
